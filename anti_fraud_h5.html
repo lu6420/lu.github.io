@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>反诈侦探闯关记</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .header h1 {
+            color: #333;
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+        .progress {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 20%;
+            transition: width 0.3s;
+        }
+        .level {
+            display: none;
+        }
+        .level.active {
+            display: block;
+        }
+        .level-title {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 16px;
+            font-weight: bold;
+        }
+        .scene {
+            background: #f5f7fa;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .scene p {
+            color: #333;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option {
+            padding: 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 15px;
+            color: #333;
+        }
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        .result {
+            display: none;
+            text-align: center;
+        }
+        .result.active {
+            display: block;
+        }
+        .result-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            color: #fff;
+            font-size: 32px;
+        }
+        .result-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        .result-desc {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        .share-btn {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 24px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            padding: 16px 24px;
+            border-radius: 8px;
+            display: none;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>反诈侦探闯关记</h1>
+            <p>测测你能躲过几个诈骗陷阱</p>
+        </div>
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- 关卡1：刷单返利 -->
+        <div class="level active" id="level1">
+            <div class="level-title">关卡1：刷单返利骗局</div>
+            <div class="scene">
+                <p>你收到一条微信好友的消息：</p>
+                <p>"亲，我们这边有个兼职，刷单就能赚钱，第一天做小单，5分钟就能赚50块，要不要试试？"</p>
+            </div>
+            <div class="options">
+                <div class="option" onclick="nextLevel(1, false)">这么好？我先做几单试试</div>
+                <div class="option" onclick="nextLevel(1, true)">刷单都是诈骗，我才不信</div>
+            </div>
+        </div>
+
+        <!-- 关卡2：冒充电商客服 -->
+        <div class="level" id="level2">
+            <div class="level-title">关卡2：冒充电商客服骗局</div>
+            <div class="scene">
+                <p>你刚买完东西，接到一个电话：</p>
+                <p>"您好，我是XX平台的客服，您的快递丢了，我们给您退款，您点一下这个链接，填一下银行卡信息，我们马上给您打钱。"</p>
+            </div>
+            <div class="options">
+                <div class="option" onclick="nextLevel(2, false)">好的，我马上点链接填信息</div>
+                <div class="option" onclick="nextLevel(2, true)">我去平台官方客服问一下，不点陌生链接</div>
+            </div>
+        </div>
+
+        <!-- 关卡3：虚假投资 -->
+        <div class="level" id="level3">
+            <div class="level-title">关卡3：虚假投资骗局</div>
+            <div class="scene">
+                <p>你被拉进了一个投资群，群里的人都在发盈利截图：</p>
+                <p>"跟着老师做投资，一周就能赚20%，我投了10万，现在已经赚了2万了，今天最后一天带单，要上车的快！"</p>
+            </div>
+            <div class="options">
+                <div class="option" onclick="nextLevel(3, false)">这么高收益？我也投一点</div>
+                <div class="option" onclick="nextLevel(3, true)">高收益都是骗子，我退群了</div>
+            </div>
+        </div>
+
+        <!-- 关卡4：冒充公检法 -->
+        <div class="level" id="level4">
+            <div class="level-title">关卡4：冒充公检法骗局</div>
+            <div class="scene">
+                <p>你接到一个电话，对方说：</p>
+                <p>"你好，我们是市公安局的，你涉嫌一起洗钱案，现在要证明你的清白，你把你银行卡里的钱转到我们的安全账户，等调查完了就还给你。"</p>
+            </div>
+            <div class="options">
+                <div class="option" onclick="nextLevel(4, false)">好的，我马上转钱，别抓我</div>
+                <div class="option" onclick="nextLevel(4, true)">公检法根本没有安全账户，你是骗子</div>
+            </div>
+        </div>
+
+        <!-- 关卡5：杀猪盘 -->
+        <div class="level" id="level5">
+            <div class="level-title">关卡5：杀猪盘骗局</div>
+            <div class="scene">
+                <p>你在交友软件认识了一个网友，聊了半个月，对方说：</p>
+                <p>"我发现一个投资平台的漏洞，我带你赚钱，我们赚了钱以后就结婚买房，你先投一点，我带你回本。"</p>
+            </div>
+            <div class="options">
+                <div class="option" onclick="nextLevel(5, false)">亲爱的，我这就投钱，我们以后好好过日子</div>
+                <div class="option" onclick="nextLevel(5, true)">刚认识就谈钱，你是骗子吧</div>
+            </div>
+        </div>
+
+        <!-- 结果页 -->
+        <div class="result" id="result">
+            <div class="result-icon">🔍</div>
+            <div class="result-title" id="resultTitle">防骗大师！</div>
+            <div class="result-desc" id="resultDesc">
+                你已经躲过了所有的诈骗陷阱！你的防骗能力满分！
+                <br>快把你的结果分享到小红书，让你的朋友也来测一测！
+            </div>
+            <button class="share-btn" onclick="shareToXiaohongshu()">分享到小红书</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let currentLevel = 1;
+        let correctCount = 0;
+        const totalLevel = 5;
+
+        function showToast(text) {
+            const toast = document.getElementById('toast');
+            toast.innerText = text;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 1500);
+        }
+
+        function nextLevel(level, isCorrect) {
+            if (isCorrect) {
+                correctCount++;
+                showToast('答对啦！你识破了骗子的套路！');
+            } else {
+                showToast('答错了！这就是骗子的套路，真实案例里有人因此被骗了8000块！');
+            }
+
+            // 隐藏当前关卡
+            document.getElementById('level' + level).classList.remove('active');
+            currentLevel++;
+
+            if (currentLevel > totalLevel) {
+                // 显示结果
+                showResult();
+            } else {
+                // 显示下一关
+                document.getElementById('level' + currentLevel).classList.add('active');
+                // 更新进度
+                document.getElementById('progressBar').style.width = (currentLevel * 20) + '%';
+            }
+        }
+
+        function showResult() {
+            const resultTitle = document.getElementById('resultTitle');
+            const resultDesc = document.getElementById('resultDesc');
+            
+            if (correctCount == 5) {
+                resultTitle.innerText = '防骗大师！';
+                resultDesc.innerText = '你已经躲过了所有的诈骗陷阱！你的防骗能力满分！\n快把你的结果分享到小红书，让你的朋友也来测一测！';
+            } else if (correctCount >= 3) {
+                resultTitle.innerText = '防骗能手！';
+                resultDesc.innerText = `你答对了${correctCount}题，你的防骗能力还不错，不过还有一些骗局需要注意哦！\n快把你的结果分享到小红书，让你的朋友也来测一测！`;
+            } else {
+                resultTitle.innerText = '防骗小白！';
+                resultDesc.innerText = `你只答对了${correctCount}题，你太容易被骗了！快好好学习防骗知识！\n快把你的结果分享到小红书，让你的朋友也来测一测！`;
+            }
+
+            document.getElementById('progressBar').style.width = '100%';
+            document.getElementById('result').classList.add('active');
+        }
+
+        function shareToXiaohongshu() {
+            showToast('已为你生成分享图，快去小红书发布吧！');
+            // 实际部署后可引导用户保存分享图，这里做简易提示
+        }
+    </script>
+</body>
+</html>
